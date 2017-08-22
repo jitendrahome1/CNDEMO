@@ -1,0 +1,75 @@
+{
+  "DVTSourceControlWorkspaceBlueprintPrimaryRemoteRepositoryKey" : "cd57af07-7a7f-1446-ab3f-092bb53ff27c++8580+++7BC12E6",
+  "DVTSourceControlWorkspaceBlueprintWorkingCopyRepositoryLocationsKey" : {
+    "cd57af07-7a7f-1446-ab3f-092bb53ff27c++8580+++8AEC45E" : {
+
+    },
+    "cd57af07-7a7f-1446-ab3f-092bb53ff27c++8580+++B39B7EC" : {
+
+    },
+    "cd57af07-7a7f-1446-ab3f-092bb53ff27c++8580+++7BC12E6" : {
+
+    },
+    "cd57af07-7a7f-1446-ab3f-092bb53ff27c++8580+++0E9F945" : {
+
+    },
+    "cd57af07-7a7f-1446-ab3f-092bb53ff27c++8580+++E8C022A" : {
+
+    },
+    "cd57af07-7a7f-1446-ab3f-092bb53ff27c++8580+++16EF365" : {
+
+    }
+  },
+  "DVTSourceControlWorkspaceBlueprintWorkingCopyStatesKey" : {
+    "cd57af07-7a7f-1446-ab3f-092bb53ff27c++8580+++8AEC45E" : 0,
+    "cd57af07-7a7f-1446-ab3f-092bb53ff27c++8580+++B39B7EC" : 0,
+    "cd57af07-7a7f-1446-ab3f-092bb53ff27c++8580+++7BC12E6" : 0,
+    "cd57af07-7a7f-1446-ab3f-092bb53ff27c++8580+++0E9F945" : 0,
+    "cd57af07-7a7f-1446-ab3f-092bb53ff27c++8580+++E8C022A" : 0,
+    "cd57af07-7a7f-1446-ab3f-092bb53ff27c++8580+++16EF365" : 0
+  },
+  "DVTSourceControlWorkspaceBlueprintIdentifierKey" : "203F4BBE-ADBB-419A-AB64-AA6EFEA601E9",
+  "DVTSourceControlWorkspaceBlueprintWorkingCopyPathsKey" : {
+    "cd57af07-7a7f-1446-ab3f-092bb53ff27c++8580+++8AEC45E" : "iOS\/",
+    "cd57af07-7a7f-1446-ab3f-092bb53ff27c++8580+++B39B7EC" : "..",
+    "cd57af07-7a7f-1446-ab3f-092bb53ff27c++8580+++7BC12E6" : "ClearNote\/",
+    "cd57af07-7a7f-1446-ab3f-092bb53ff27c++8580+++0E9F945" : "",
+    "cd57af07-7a7f-1446-ab3f-092bb53ff27c++8580+++E8C022A" : "..\/..\/..",
+    "cd57af07-7a7f-1446-ab3f-092bb53ff27c++8580+++16EF365" : ".."
+  },
+  "DVTSourceControlWorkspaceBlueprintNameKey" : "ClearNote",
+  "DVTSourceControlWorkspaceBlueprintVersion" : 204,
+  "DVTSourceControlWorkspaceBlueprintRelativePathToProjectKey" : "ClearNote.xcworkspace",
+  "DVTSourceControlWorkspaceBlueprintRemoteRepositoriesKey" : [
+    {
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryURLKey" : "http:\/\/10.0.8.252:10001\/svn\/ClearNote",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositorySystemKey" : "com.apple.dt.Xcode.sourcecontrol.Subversion",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryIdentifierKey" : "cd57af07-7a7f-1446-ab3f-092bb53ff27c++8580+++0E9F945"
+    },
+    {
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryURLKey" : "http:\/\/10.0.8.252:10001\/svn\/ClearNote",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositorySystemKey" : "com.apple.dt.Xcode.sourcecontrol.Subversion",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryIdentifierKey" : "cd57af07-7a7f-1446-ab3f-092bb53ff27c++8580+++16EF365"
+    },
+    {
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryURLKey" : "http:\/\/10.0.6.22:10001\/svn\/ClearNote",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositorySystemKey" : "com.apple.dt.Xcode.sourcecontrol.Subversion",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryIdentifierKey" : "cd57af07-7a7f-1446-ab3f-092bb53ff27c++8580+++7BC12E6"
+    },
+    {
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryURLKey" : "http:\/\/10.0.8.252:10001\/svn\/ClearNote",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositorySystemKey" : "com.apple.dt.Xcode.sourcecontrol.Subversion",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryIdentifierKey" : "cd57af07-7a7f-1446-ab3f-092bb53ff27c++8580+++8AEC45E"
+    },
+    {
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryURLKey" : "http:\/\/10.0.8.252:10001\/svn\/ClearNote",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositorySystemKey" : "com.apple.dt.Xcode.sourcecontrol.Subversion",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryIdentifierKey" : "cd57af07-7a7f-1446-ab3f-092bb53ff27c++8580+++B39B7EC"
+    },
+    {
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryURLKey" : "http:\/\/10.0.8.252:10001\/svn\/ClearNote",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositorySystemKey" : "com.apple.dt.Xcode.sourcecontrol.Subversion",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryIdentifierKey" : "cd57af07-7a7f-1446-ab3f-092bb53ff27c++8580+++E8C022A"
+    }
+  ]
+}

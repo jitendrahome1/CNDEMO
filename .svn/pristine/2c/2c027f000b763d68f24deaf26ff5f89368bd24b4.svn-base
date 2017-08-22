@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="7706" systemVersion="14F27" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES">
+    <dependencies>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="7703"/>
+    </dependencies>
+    <customFonts key="customFonts">
+        <mutableArray key="Roboto-Regular_5.ttf">
+            <string>Roboto-Regular</string>
+            <string>Roboto-Regular</string>
+        </mutableArray>
+    </customFonts>
+    <objects>
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner"/>
+        <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
+        <view contentMode="scaleToFill" id="iN0-l3-epB" customClass="CnNoteDescriptionView">
+            <rect key="frame" x="0.0" y="0.0" width="320" height="470"/>
+            <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+            <subviews>
+                <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" horizontalHuggingPriority="29" contentHorizontalAlignment="left" contentVerticalAlignment="center" text="Document Name" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="moU-ZU-PiO">
+                    <rect key="frame" x="15" y="8" width="253" height="37"/>
+                    <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                    <constraints>
+                        <constraint firstAttribute="width" constant="253" id="TWQ-eR-QO7"/>
+                        <constraint firstAttribute="height" constant="37" id="q6a-BP-Krj"/>
+                    </constraints>
+                    <color key="textColor" white="0.33333333333333331" alpha="1" colorSpace="calibratedWhite"/>
+                    <fontDescription key="fontDescription" name="Roboto-Regular" family="Roboto" pointSize="15"/>
+                    <textInputTraits key="textInputTraits" autocapitalizationType="sentences" keyboardType="alphabet"/>
+                </textField>
+                <button opaque="NO" tag="101" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="tSQ-Xz-qNZ">
+                    <rect key="frame" x="274" y="0.0" width="41" height="49"/>
+                    <constraints>
+                        <constraint firstAttribute="height" constant="49" id="Sc8-TO-2XF"/>
+                        <constraint firstAttribute="width" constant="41" id="XBc-Jh-1qr"/>
+                    </constraints>
+                    <state key="normal" image="GrayCrossiPhone"/>
+                </button>
+                <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" textAlignment="natural" translatesAutoresizingMaskIntoConstraints="NO" id="LW9-Ea-WrK">
+                    <rect key="frame" x="13" y="59" width="304" height="408"/>
+                    <inset key="scrollIndicatorInsets" minX="0.0" minY="0.0" maxX="-4" maxY="0.0"/>
+                    <color key="textColor" white="0.33333333333333331" alpha="1" colorSpace="calibratedWhite"/>
+                    <fontDescription key="fontDescription" name="Roboto-Regular" family="Roboto" pointSize="15"/>
+                    <textInputTraits key="textInputTraits" autocapitalizationType="sentences" autocorrectionType="no" spellCheckingType="no"/>
+                </textView>
+            </subviews>
+            <constraints>
+                <constraint firstItem="LW9-Ea-WrK" firstAttribute="top" secondItem="tSQ-Xz-qNZ" secondAttribute="bottom" constant="10" id="5hI-qj-qiN"/>
+                <constraint firstAttribute="bottom" secondItem="LW9-Ea-WrK" secondAttribute="bottom" constant="3" id="7pu-Fm-ReW"/>
+                <constraint firstItem="LW9-Ea-WrK" firstAttribute="leading" secondItem="iN0-l3-epB" secondAttribute="leading" constant="13" id="8AN-Lq-rkg"/>
+                <constraint firstItem="moU-ZU-PiO" firstAttribute="top" secondItem="iN0-l3-epB" secondAttribute="top" constant="8" id="IrY-G7-iXG"/>
+                <constraint firstAttribute="trailing" secondItem="tSQ-Xz-qNZ" secondAttribute="trailing" constant="5" id="acp-k1-jes"/>
+                <constraint firstItem="tSQ-Xz-qNZ" firstAttribute="top" secondItem="iN0-l3-epB" secondAttribute="top" id="cOb-tf-BFn"/>
+                <constraint firstAttribute="trailing" secondItem="moU-ZU-PiO" secondAttribute="trailing" constant="52" id="dOg-a8-qzp"/>
+                <constraint firstAttribute="trailing" secondItem="LW9-Ea-WrK" secondAttribute="trailing" constant="3" id="gAY-zJ-II9"/>
+                <constraint firstItem="moU-ZU-PiO" firstAttribute="leading" secondItem="iN0-l3-epB" secondAttribute="leading" constant="15" id="scT-Yu-W94"/>
+            </constraints>
+            <nil key="simulatedStatusBarMetrics"/>
+            <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
+            <connections>
+                <outlet property="btnNoteTitleCross" destination="tSQ-Xz-qNZ" id="h3D-aG-Lvn"/>
+                <outlet property="txtNoteTitle" destination="moU-ZU-PiO" id="vZ9-TZ-2eO"/>
+                <outlet property="txtWritingArea" destination="LW9-Ea-WrK" id="bfF-IM-fwP"/>
+            </connections>
+            <point key="canvasLocation" x="235" y="118"/>
+        </view>
+    </objects>
+    <resources>
+        <image name="GrayCrossiPhone" width="18" height="18"/>
+    </resources>
+</document>

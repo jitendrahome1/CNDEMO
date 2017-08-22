@@ -1,0 +1,302 @@
+//
+//  CNTrashViewController.m
+//  ClearNote
+//
+//  Created by Jitendra Agarwal on 01/12/15.
+//  Copyright © 2015 Jitendra Agarwal. All rights reserved.
+//
+
+#import "CNTrashViewController.h"
+#import "CNTrashTableViewCell.h"
+#import "CNAllNotsListViewController.h"
+#import "SWTableViewCell.h"
+@interface CNTrashViewController ()<SWTableViewCellDelegate>
+{
+    NSMutableArray *arrAllNots;
+    NSString * noteID;
+    NSString *noteName;
+    NSString *tempUserId;
+    UIBarButtonItem *btnEmpty;
+}
+@property (strong, nonatomic)  UIRefreshControl* refreshControl;
+@end
+
+@implementation CNTrashViewController
+
+- (void)viewDidLoad {
+    [super viewDidLoad];
+    [self intinalSetup];
+}
+- (void)didReceiveMemoryWarning {
+    [super didReceiveMemoryWarning];
+    // Dispose of any resources that can be recreated.
+}
+
+-(void)intinalSetup
+{
+    arrAllNots = [[NSMutableArray alloc]init];
+    [[UIApplication sharedApplication] setStatusBarHidden:NO];
+    [self.navigationController setNavigationBarHidden:NO];
+    self.navigationItem.title = @"Trash";
+    [self.navigationController.navigationBar setTitleTextAttributes:
+     @{NSForegroundColorAttributeName: kDefaulColor,
+       NSFontAttributeName:kFontRobotoRegular(16)}];
+    
+    btnEmpty = [[UIBarButtonItem alloc]initWithTitle:@"Empty" style:UIBarButtonItemStylePlain target:self action:@selector(btnEmptyAction)];
+    [btnEmpty setTitleTextAttributes:[NSDictionary dictionaryWithObjectsAndKeys:
+                                      kFontRobotoRegular(17), NSFontAttributeName,
+                                      kDefaulColor, NSForegroundColorAttributeName,
+                                      nil]
+                            forState:UIControlStateNormal];
+    
+    NSArray *actionButtonItems = @[btnEmpty];
+    self.navigationItem.rightBarButtonItems = actionButtonItems;
+    UIBarButtonItem *backBtn = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"BackHeaderIconiPhone.png"] style:UIBarButtonItemStylePlain target:self action:@selector(backBtnAction)];
+    self.navigationItem.leftBarButtonItem = backBtn;
+}
+-(void)viewWillAppear:(BOOL)animated
+{
+    [super viewWillAppear:animated];
+    [self tableSetUp];
+}
+#pragma mark- Button Action
+-(void)backBtnAction
+{
+    [self.navigationController popViewControllerAnimated:YES];
+}
+#pragma mark- Empty Action
+-(void)btnEmptyAction
+{
+    [UIAlertView showWithTitle:@"" message:@"Notes will be deleted forever" cancelButtonTitle:@"Cancel" otherButtonTitles:@[@"Delete"] withCompletion:^(UIAlertView *alertView, NSInteger buttonIndex) {
+        
+        if(buttonIndex == 1)
+        {
+            [self loderStart:self.view strLbl:@"Loading"];
+            [self postDataforRequestId:Request_Empty_All_Notes];
+        }
+    }];
+}
+#pragma mark- User Define Function
+-(void)tableSetUp
+{
+    [arrAllNots removeAllObjects];
+    NSArray *arrResult = [CNDataHelper CNdBGetAllNoteWithUserID:[CNHelper sharedInstance].userLoginID isdeleValue:@"1"];
+    [arrAllNots addObjectsFromArray:arrResult];
+    if (arrAllNots == nil || [arrAllNots count] == 0) {
+        self.viewBGTable.hidden = YES;
+        self.navigationItem.rightBarButtonItem = nil;
+    }
+    else
+    {
+        self.viewBGTable.hidden = NO;
+        [self.tblTrash reloadData];
+    }
+}
+#pragma marks- Table view Delegate
+- (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
+{
+    return 1;
+}
+- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
+{
+    return arrAllNots.count;
+}
+-(CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath{
+    static NSString *cellIdentifier = @"cnAllNoteListTableCell";
+    CNAllNoteListTableCell *cell = [tableView dequeueReusableCellWithIdentifier:cellIdentifier];
+    UIFont * font = cell.lblNoteName.font;
+    float newHeight,cellHeight,titleHeight,titleWidth,heightRow;
+    cellHeight = self.tblTrash.rowHeight;
+    titleWidth = cell.lblNoteName.frame.size.width;
+    titleHeight = cell.lblNoteName.frame.size.height;
+    heightRow = [cell getLabelSizeFortext:cell.lblNoteName.text forWidth:titleWidth WithFont:font].height;
+    newHeight = cellHeight+heightRow-titleHeight;
+    
+    cell.lblNoteName.lineBreakMode = YES;
+    cell.lblNoteName.lineBreakMode = NSLineBreakByWordWrapping;
+    cell.lblNoteName.adjustsFontSizeToFitWidth = YES;
+    cell.lblNoteName.numberOfLines = heightRow;
+    [cell.lblNoteName updateConstraintsIfNeeded];
+    [cell.lblNoteName setNeedsUpdateConstraints];
+    [cell.lblNoteName  sizeToFit];
+    if (newHeight<cellHeight)
+    {
+        newHeight=cellHeight;
+    }
+    
+    return 66;
+}
+- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    static NSString *simpleTableIdentifier = @"cnTrashTableViewCell";
+    NSMutableArray *leftUtilityButtons = [NSMutableArray new];
+    NSMutableArray *rightUtilityButtons = [NSMutableArray new];
+    CNTrashTableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:simpleTableIdentifier];
+    MasterNote *_objMasterList = [arrAllNots objectAtIndex:indexPath.row];
+    cell.lblNoteTitle.text = _objMasterList.noteName;
+    [cell setNeedsUpdateConstraints];
+    [cell updateConstraintsIfNeeded];
+    cell.selectionStyle = UITableViewCellSelectionStyleNone;
+    return cell;
+}
+- (void)tableView:(UITableView *)tableView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    if (editingStyle==UITableViewCellEditingStyleDelete)
+    {
+        
+        [self.tblTrash deleteRowsAtIndexPaths:[[NSArray alloc]initWithObjects:[NSIndexPath indexPathForRow:indexPath.row inSection:0], nil] withRowAnimation:UITableViewRowAnimationNone];
+    }
+}
+-(NSArray *)tableView:(UITableView *)tableView editActionsForRowAtIndexPath:(NSIndexPath *)indexPath {
+    
+    UITableViewRowAction *button = [UITableViewRowAction rowActionWithStyle:UITableViewRowActionStyleDestructive title:@"       " handler:^(UITableViewRowAction *action, NSIndexPath *indexPath)
+                                    {
+                                        _noteOBJ = [arrAllNots objectAtIndex:indexPath.row];
+                                        noteID = _noteOBJ.noteCreateID;
+                                        noteName = _noteOBJ.noteName;
+                                        tempUserId = _noteOBJ.tempUserId;
+                                        //[arrAllNots removeObjectAtIndex:indexPath.row];
+                                        [self postDataforRequestId:Request_Delete_Note];
+                                    }];
+    button.backgroundColor = [UIColor colorWithPatternImage:[UIImage imageNamed:@"DeleteiPhone"]];
+    UITableViewRowAction *button2 = [UITableViewRowAction rowActionWithStyle:UITableViewRowActionStyleDefault title:@"       " handler:^(UITableViewRowAction *action, NSIndexPath *indexPath)
+                                     {
+                                         _noteOBJ = [arrAllNots objectAtIndex:indexPath.row];
+                                         noteID = _noteOBJ.noteCreateID;
+                                         noteName = _noteOBJ.noteName;
+                                         tempUserId = _noteOBJ.tempUserId;
+                                         //[arrAllNots removeObjectAtIndex:indexPath.row];
+                                         [self postDataforRequestId:Request_Restore_Note];
+                                         }];
+    button2.backgroundColor = [UIColor colorWithPatternImage:[UIImage imageNamed:@"RestoreiPhone"]]; //arbitrary color
+    return @[button,button2];
+}
+
+- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    
+}
+// APi Call
+#pragma mark -
+#pragma mark APi Handel Response
+-(void)postDataforRequestId:(int) requestId
+{
+    NSString *currentTimestamp = [[CNHelper sharedInstance]gettimestampStringFroLocalTime];
+    if(requestId == Request_Delete_Note)
+    {
+        if ([[AFNetworkReachabilityManager sharedManager] isReachable])
+        {
+            [[CNRequestController sharedInstance]CNRequestDeleteNoteWithUserID:[CNHelper sharedInstance].userLoginID noteID:noteID currentTimestamp:currentTimestamp success:^(id responseDict) {
+                [self notifyRequesterWithData:responseDict forRequest:Request_Delete_Note];
+            } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+                [CNDataHelper CNdBDeleteNotePermanentlyWithuserID:[CNHelper sharedInstance].userLoginID noteCreateID:noteID noteName:noteName tempUserId:tempUserId isSynchoronization:@"0"];
+                [self tableSetUp];
+            }];
+        }
+        else
+        { // net is not working
+            [self loderStop:self.view];
+            [CNDataHelper CNdBDeleteNotePermanentlyWithuserID:[CNHelper sharedInstance].userLoginID noteCreateID:noteID noteName:noteName tempUserId:tempUserId isSynchoronization:@"0"];
+            [self tableSetUp];
+        }
+    }
+    else if(requestId == Request_Restore_Note)
+    {
+        NSString *currentTimestamp = [[CNHelper sharedInstance]gettimestampStringFroLocalTime];
+        if ([[AFNetworkReachabilityManager sharedManager] isReachable])
+        {
+            [[CNRequestController sharedInstance]CNRequestRestoreNoteWithUserID:[CNHelper sharedInstance].userLoginID noteID:noteID currentTimestamp:currentTimestamp  success:^(id responseDict) {
+                [self notifyRequesterWithData:responseDict forRequest:Request_Restore_Note];
+            } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+                
+                [self loderStop:self.view];
+                [CNDataHelper CNdBRestoreNoteWithUserID:[CNHelper sharedInstance].userLoginID noteCreateID:noteID isDeleted:@"0" noteName:noteName tempUserId:tempUserId isSynchoronization:@"0"];
+                [self tableSetUp];
+            }];
+        }
+        else
+        {        [self loderStop:self.view];
+            [CNDataHelper CNdBRestoreNoteWithUserID:[CNHelper sharedInstance].userLoginID noteCreateID:noteID isDeleted:@"0" noteName:noteName tempUserId:tempUserId isSynchoronization:@"0"];
+            [self tableSetUp];
+        }
+        
+    }
+    
+    else if(requestId == Request_Empty_All_Notes)
+    {
+        NSString *currentTimestamp = [[CNHelper sharedInstance]gettimestampStringFroLocalTime];
+        if ([[AFNetworkReachabilityManager sharedManager] isReachable])
+        {
+            dispatch_async(dispatch_get_global_queue( DISPATCH_QUEUE_PRIORITY_LOW, 0), ^{
+                [[CNRequestController sharedInstance]CNRequestDeleteNoteWithUserID:[CNHelper sharedInstance].userLoginID noteID:@"0" currentTimestamp:currentTimestamp success:^(id responseDict) {
+                    [self notifyRequesterWithData:responseDict forRequest:Request_Empty_All_Notes];
+                } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+                    [self loderStop:self.view];
+                    for(int i= 0; i<arrAllNots.count; i++)
+                    {
+                        MasterNote *_objMasterNote = [arrAllNots objectAtIndex:i];
+                        [CNDataHelper CNdBDeleteNotePermanentlyWithuserID:[CNHelper sharedInstance].userLoginID noteCreateID:_objMasterNote.noteCreateID noteName:_objMasterNote.noteName  tempUserId:_objMasterNote.tempUserId isSynchoronization:@"0"];
+                    }
+                    [self tableSetUp];
+                    
+                }];
+                
+                dispatch_async(dispatch_get_main_queue(), ^{
+                    [self loderStop:self.view];
+                });
+            });
+            // just pass the note ID " 0" for empty all note
+        }
+        else
+        {   // net is not working
+            [self loderStop:self.view];
+            for(int i= 0; i<arrAllNots.count; i++)
+            {
+                MasterNote *_objMasterNote = [arrAllNots objectAtIndex:i];
+                [CNDataHelper CNdBDeleteNotePermanentlyWithuserID:[CNHelper sharedInstance].userLoginID noteCreateID:_objMasterNote.noteCreateID noteName:_objMasterNote.noteName  tempUserId:_objMasterNote.tempUserId isSynchoronization:@"0"];
+            }
+            [self tableSetUp];
+        }
+        
+    }
+}
+-(void)notifyRequesterWithData:(id) responseData forRequest:(int) requestId
+{
+    NSString *message = nil;
+    NSString *code = responseData[@"ResponseCode"];
+    message = responseData[@"ResponseDetails"];
+    if(requestId == Request_Delete_Note)
+    {
+        if([code isEqualToString:@"200"])
+        {
+            
+            [CNDataHelper CNdBDeleteNotePermanentlyWithuserID:[CNHelper sharedInstance].userLoginID noteCreateID:responseData[@"noteId"] noteName:noteName tempUserId:tempUserId isSynchoronization:responseData[@"isSynchronise"]];
+            [self tableSetUp];
+        }
+        else
+        {
+            NSLog(@"Error");
+        }
+    }
+    else if(requestId == Request_Restore_Note)
+    {
+        if([code isEqualToString:@"200"])
+        {
+            [CNDataHelper CNdBRestoreNoteWithUserID:[CNHelper sharedInstance].userLoginID noteCreateID:responseData[@"noteId"]  isDeleted:responseData[@"isDeleted"] noteName:noteName tempUserId:tempUserId isSynchoronization:responseData[@"isSynchronise"]];
+            [self tableSetUp];
+        }
+        else
+        {
+            NSLog(@"Error");
+        }
+        
+    }
+    else if(requestId == Request_Empty_All_Notes)
+    {
+        [self loderStop:self.view];
+        [CNDataHelper flashOutAllRecordsMasterNote:@"MasterNote" userID:[CNHelper sharedInstance].userLoginID];
+        [self tableSetUp];
+    }
+}
+
+@end

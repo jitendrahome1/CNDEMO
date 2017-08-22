@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<model userDefinedModelVersionIdentifier="" type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="9525" systemVersion="15A284" minimumToolsVersion="Xcode 7.0">
+    <entity name="CreateNoteContentOffline" representedClassName="CreateNoteContentOffline" syncable="YES">
+        <attribute name="content" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="isdeleted" optional="YES" attributeType="Boolean" syncable="YES"/>
+        <attribute name="isSynchoronization" optional="YES" attributeType="Boolean" syncable="YES"/>
+        <attribute name="noteCreateDate" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="noteCreateID" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="noteName" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="tempUserId" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="timestamp" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="userID" optional="YES" attributeType="String" syncable="YES"/>
+    </entity>
+    <entity name="CreateNoteOfline" representedClassName="CreateNoteOfline" syncable="YES">
+        <attribute name="fileData" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="isdeleted" optional="YES" attributeType="Boolean" syncable="YES"/>
+        <attribute name="isSynchoronization" optional="YES" attributeType="Boolean" syncable="YES"/>
+        <attribute name="noteCreateDate" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="noteCreateID" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="noteName" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="tempUserID" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="timestamp" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="userID" optional="YES" attributeType="String" syncable="YES"/>
+    </entity>
+    <entity name="CreatePermanentDelete" representedClassName="CreatePermanentDelete" syncable="YES">
+        <attribute name="fileData" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="isdeleted" optional="YES" attributeType="Boolean" syncable="YES"/>
+        <attribute name="isSynchoronization" optional="YES" attributeType="Boolean" syncable="YES"/>
+        <attribute name="noteCreateDate" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="noteCreateID" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="noteName" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="tempUserId" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="timestamp" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="userID" optional="YES" attributeType="String" syncable="YES"/>
+    </entity>
+    <entity name="CreateRestoreOfline" representedClassName="CreateRestoreOfline" syncable="YES">
+        <attribute name="fileData" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="isdeleted" optional="YES" attributeType="Boolean" syncable="YES"/>
+        <attribute name="isSynchoronization" optional="YES" attributeType="Boolean" syncable="YES"/>
+        <attribute name="noteCreateDate" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="noteCreateID" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="noteName" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="tempUserId" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="timestamp" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="userID" optional="YES" attributeType="String" syncable="YES"/>
+    </entity>
+    <entity name="CreateTemporaryDelete" representedClassName="CreateTemporaryDelete" syncable="YES">
+        <attribute name="fileData" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="isdeleted" optional="YES" attributeType="Boolean" syncable="YES"/>
+        <attribute name="isSynchoronization" optional="YES" attributeType="Boolean" syncable="YES"/>
+        <attribute name="noteCreateDate" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="noteCreateID" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="noteName" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="tempUserId" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="timestamp" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="userID" optional="YES" attributeType="String" syncable="YES"/>
+    </entity>
+    <entity name="DefultNoteName" representedClassName="DefultNoteName" syncable="YES">
+        <attribute name="autoIncrementValue" optional="YES" attributeType="Integer 64" defaultValueString="0" syncable="YES"/>
+    </entity>
+    <entity name="MasterNote" representedClassName="MasterNote" syncable="YES">
+        <attribute name="fileData" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="isdeleted" optional="YES" attributeType="Boolean" syncable="YES"/>
+        <attribute name="isSynchoronization" optional="YES" attributeType="Boolean" syncable="YES"/>
+        <attribute name="noteCreateDate" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="noteCreateID" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="noteName" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="tempUserId" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="timestamp" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="userID" optional="YES" attributeType="String" syncable="YES"/>
+    </entity>
+    <entity name="Users" representedClassName="Users" syncable="YES">
+        <attribute name="email" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="userID" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="userName" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="userPassword" optional="YES" attributeType="String" syncable="YES"/>
+    </entity>
+    <elements>
+        <element name="CreateNoteContentOffline" positionX="-27" positionY="108" width="128" height="180"/>
+        <element name="CreateNoteOfline" positionX="-54" positionY="63" width="128" height="180"/>
+        <element name="CreatePermanentDelete" positionX="-9" positionY="126" width="128" height="180"/>
+        <element name="CreateRestoreOfline" positionX="-27" positionY="108" width="128" height="180"/>
+        <element name="CreateTemporaryDelete" positionX="-45" positionY="90" width="128" height="180"/>
+        <element name="DefultNoteName" positionX="-27" positionY="108" width="128" height="60"/>
+        <element name="MasterNote" positionX="-54" positionY="18" width="128" height="180"/>
+        <element name="Users" positionX="-54" positionY="-9" width="128" height="105"/>
+    </elements>
+</model>

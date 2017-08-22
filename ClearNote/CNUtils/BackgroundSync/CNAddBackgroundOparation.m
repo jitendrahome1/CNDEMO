@@ -1,0 +1,90 @@
+//
+//  CNAddBackgroundOparation.m
+//  ClearNote
+//
+//  Created by Jitendra Agarwal on 02/12/15.
+//  Copyright © 2015 Jitendra Agarwal. All rights reserved.
+//
+
+#import "CNAddBackgroundOparation.h"
+@implementation CNAddBackgroundOparation
+AppDelegate *appDelegate;
+
++(CNAddBackgroundOparation *)sharedInstance
+{
+    static CNAddBackgroundOparation *sharedInstance_ = nil;
+    static dispatch_once_t pred;
+    
+    dispatch_once(&pred, ^{
+        sharedInstance_ = [[CNAddBackgroundOparation alloc] init];
+        appDelegate=[[UIApplication sharedApplication]delegate];
+    });
+    
+    return sharedInstance_;
+}
+-(void)AddBackgroundProcess
+{
+     NSMutableArray *arrFetchData =[[NSMutableArray alloc]init];
+    
+    arrFetchData = [CNDataHelper CNdBFetchBackSyncCreateNoteOfline:get_ValueByKye(kLoginID) entityName:@"CreateNoteOfline"];
+    
+    if(arrFetchData.count > 0)
+    {
+        [self showUploadingMessage];
+        CreateNoteOfline *_uploadedData = (CreateNoteOfline*)[arrFetchData objectAtIndex:0];
+        [[CNBackgroundSync sharedInstance]StartProcess:_uploadedData];
+      }
+    [arrFetchData removeAllObjects];
+    arrFetchData = [CNDataHelper CNdBFetchBackSyncCreateNoteOfline:get_ValueByKye(kLoginID) entityName:@"CreateTemporaryDelete"];
+    if(arrFetchData.count > 0)
+    {
+        [self showUploadingMessage];
+        CreateTemporaryDelete *_uploadedData = (CreateTemporaryDelete*)[arrFetchData objectAtIndex:0];
+        [[CNBackgroundSync sharedInstance]StartProcess:_uploadedData];
+        
+    }
+     [arrFetchData removeAllObjects];
+       arrFetchData = [CNDataHelper CNdBFetchBackSyncCreateNoteOfline:get_ValueByKye(kLoginID) entityName:@"CreatePermanentDelete"];
+    if(arrFetchData.count > 0)
+    {
+        [self showUploadingMessage];
+        CreatePermanentDelete *_uploadedData = (CreatePermanentDelete*)[arrFetchData objectAtIndex:0];
+        NSLog(@"%@",_uploadedData.userID);
+        [[CNBackgroundSync sharedInstance]StartProcess:_uploadedData];
+        
+    }
+    [arrFetchData removeAllObjects];
+    arrFetchData = [CNDataHelper CNdBFetchBackSyncCreateNoteOfline:get_ValueByKye(kLoginID) entityName:@"CreateRestoreOfline"];
+    if(arrFetchData.count > 0)
+    {
+        [self showUploadingMessage];
+        CreateRestoreOfline *_uploadedData = (CreateRestoreOfline*)[arrFetchData objectAtIndex:0];
+        NSLog(@"%@",_uploadedData.userID);
+        [[CNBackgroundSync sharedInstance]StartProcess:_uploadedData];
+        
+    }
+    [arrFetchData removeAllObjects];
+     arrFetchData = [CNDataHelper CNdBFetchBackSyncCreateNoteOfline:get_ValueByKye(kLoginID) entityName:@"CreateNoteContentOffline"];
+    if(arrFetchData.count > 0)
+    {
+        [self showUploadingMessage];
+        CreateNoteContentOffline *_uploadedData = (CreateNoteContentOffline*)[arrFetchData objectAtIndex:0];
+        NSLog(@"%@",_uploadedData.userID);
+        [[CNBackgroundSync sharedInstance]StartProcess:_uploadedData];
+        
+    }
+}
+
+#pragma mark-
+#pragma mark- upload messge show
+-(void)showUploadingMessage
+{
+    if (appDelegate.isUploadFromBacground) {
+        UIWindow *window = [[[UIApplication sharedApplication] windows] objectAtIndex:0];
+        [[CNHelper sharedInstance] addNoNetworkViewOverView:window OriginY:0.0 WithText:@"Connecting..."];
+        appDelegate.isUploadFromBacground = NO;
+    }
+    
+}
+
+@end

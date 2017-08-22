@@ -1,0 +1,332 @@
+//
+//  CNRequestController.m
+//  ClearNote
+//
+//  Created by Jitendra Agarwal on 01/12/15.
+//  Copyright © 2015 Jitendra Agarwal. All rights reserved.
+//
+
+#import "CNRequestController.h"
+
+@implementation CNRequestController
++ (CNRequestController *)sharedInstance
+{
+    static CNRequestController *sharedInstance_ = nil;
+    static dispatch_once_t pred;
+    
+    dispatch_once(&pred, ^{
+        sharedInstance_ = [[CNRequestController alloc] init];
+    });
+    
+    return sharedInstance_;
+}
+#pragma mark -
+#pragma mark Custom Init Method
+- (instancetype)init
+{
+     self = [super initWithBaseURL:[NSURL URLWithString:CNWebServiceBaseURL]];
+    if (self)
+    {
+        self.requestSerializer = [AFHTTPRequestSerializer serializer];
+        self.responseSerializer  =[AFJSONResponseSerializer serializerWithReadingOptions:NSJSONReadingAllowFragments];
+        self.securityPolicy.allowInvalidCertificates = YES;
+        self.responseSerializer.acceptableContentTypes = [NSSet setWithObjects:@"application/json", @"text/json", @"text/javascript",@"text/html",@"text/plain", nil];
+        self.shouldUseCredentialStorage = YES;
+
+    }
+    return self;
+}
+#pragma mark -
+#pragma mark request manager
+
+#pragma mark -
+#pragma mark request manager
+
+-(AFHTTPRequestOperationManager*)getRequestManagerWithUrl
+{
+    AFHTTPRequestOperationManager *requestmaneger = [[AFHTTPRequestOperationManager alloc]initWithBaseURL:[NSURL URLWithString:[CNHelper sharedInstance].CNBaseURL]];
+    
+    requestmaneger.requestSerializer = [AFHTTPRequestSerializer serializer];
+    requestmaneger.responseSerializer  =[AFJSONResponseSerializer serializerWithReadingOptions:NSJSONReadingAllowFragments];
+    requestmaneger.securityPolicy.allowInvalidCertificates = YES;
+    requestmaneger.responseSerializer.acceptableContentTypes = [NSSet setWithObjects:@"application/json", @"text/json", @"text/javascript",@"text/html",@"text/plain", nil];
+    requestmaneger.shouldUseCredentialStorage = YES;
+    
+    return requestmaneger;
+}
+#pragma mark-
+#pragma mark- Start Functions.
+#pragma mark- user Login-
+-(void)CNRequestAuthenticateUserWithEmail:(NSString *)email password:(NSString *)password success: (void(^)(id responseDict))success failure:(void(^)(AFHTTPRequestOperation *operation, NSError *error))failure
+{
+    static NSString *endpoint = @"AppPosts/Login";
+    
+    NSDictionary *params;
+    
+    params = @{@"EmailId":email,
+                        @"Password":password,
+                        @"APIKey":APIKey};
+    
+    [self POST:endpoint
+    parameters:params
+       success:^(AFHTTPRequestOperation *operation, id responseObject) {
+           if (![responseObject isKindOfClass:[NSDictionary class]]){
+               NSError *error;
+               failure(operation, error);
+               return;
+           }
+            success(responseObject);
+       }
+       failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+           
+         failure(operation, error);
+           NSLog(@"%@",error.description);
+       }];
+}
+#pragma mark- New User Registration
+-(void)CNRequestRegistrationWithEmail:(NSString *)email password:(NSString *)password userName:(NSString *)userName success: (void(^)(id responseDict))success failure:(void(^)(AFHTTPRequestOperation *operation, NSError *error))failure
+{
+    static NSString *endpoint = @"AppPosts/userRegistration";
+    
+    NSDictionary *params;
+    
+    params = @{@"EmailId":email,
+               @"Password":password,
+               @"userName":userName,
+               @"APIKey":APIKey};
+    
+    [self POST:endpoint
+    parameters:params
+       success:^(AFHTTPRequestOperation *operation, id responseObject) {
+           if (![responseObject isKindOfClass:[NSDictionary class]]){
+               NSError *error;
+               failure(operation, error);
+               return;
+           }
+           success(responseObject);
+       }
+       failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+           
+           failure(operation, error);
+       }];
+}
+#pragma mark- Change password
+-(void)CNRequestChnagePasswordWithUserID:(NSString *)userID oldPassword:(NSString *)oldPassword newPassword:(NSString *)newPassword success: (void(^)(id responseDict))success failure:(void(^)(AFHTTPRequestOperation *operation, NSError *error))failure;
+{
+    static NSString *endpoint = @"AppPosts/ChangePassword";
+    
+    NSDictionary *params;
+    
+    params = @{@"userId":userID,
+               @"oldpassword":oldPassword,
+               @"password":newPassword,
+               @"APIKey":APIKey};
+    
+    [self POST:endpoint
+    parameters:params
+       success:^(AFHTTPRequestOperation *operation, id responseObject) {
+           if (![responseObject isKindOfClass:[NSDictionary class]]){
+               NSError *error;
+               failure(operation, error);
+               return;
+           }
+           success(responseObject);
+       }
+       failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+           
+           failure(operation, error);
+       }];
+}
+
+#pragma mark- Create A new note
+-(void)CNRequestCreateNoteWithUserID:(NSString *)userID noteTitle:(NSString *)noteTitle content:(NSString *)content createDateTime:(NSString *)createDateTime isSynchronise: (NSString *)isSynchronise success: (void(^)(id responseDict))success  failure:(void(^)(AFHTTPRequestOperation *operation, NSError *error))failure
+{
+    static NSString *endpoint = @"AppPosts/CreateNote";
+    
+    NSDictionary *params;
+    
+    params = @{@"userId":userID,
+               @"Notetitle":noteTitle,
+               @"text":content,
+               @"isSynchronise":isSynchronise,
+               @"noteCreatedDateTime":createDateTime,
+               @"APIKey":APIKey};
+    
+    [self POST:endpoint
+    parameters:params
+       success:^(AFHTTPRequestOperation *operation, id responseObject) {
+           if (![responseObject isKindOfClass:[NSDictionary class]]){
+               NSError *error;
+               failure(operation, error);
+               return;
+           }
+           success(responseObject);
+       }
+       failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+           
+           failure(operation, error);
+       }];
+}
+#pragma mark- Get All NoteList
+-(void)CNRequestGetAllNoteListWithUserID:(NSString *)userID timestamp:(NSString *)timestamp currentTimestamp:(NSString *)currentTimestamp success: (void(^)(id responseDict))success  failure:(void(^)(AFHTTPRequestOperation *operation, NSError *error))failure
+{
+    static NSString *endpoint = @"AppPosts/NoteList";
+    
+    NSDictionary *params;
+    
+    params = @{@"userId":userID,
+                        @"timestamp":timestamp,
+                        @"currentTimestamp":currentTimestamp,
+                    @"APIKey":APIKey};
+    
+    [self POST:endpoint
+    parameters:params
+       success:^(AFHTTPRequestOperation *operation, id responseObject) {
+           
+           success(responseObject);
+       }
+       failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+           
+           failure(operation, error);
+       }];
+}
+
+
+#pragma mark- Move To Trash
+-(void)CNRequestMoveToTrashWithUserID:(NSString *)userID noteID:(NSString *)noteID currentTimestamp:(NSString *)currentTimestamp success: (void(^)(id responseDict))success  failure:(void(^)(AFHTTPRequestOperation *operation, NSError *error))failure
+{
+    static NSString *endpoint = @"AppPosts/moveToTrash";
+    
+    NSDictionary *params;
+    
+    params = @{@"userId":userID,
+                        @"noteid":noteID,
+                        @"currentTimestamp":currentTimestamp,
+                        @"APIKey":APIKey};
+    
+    [self POST:endpoint
+    parameters:params
+       success:^(AFHTTPRequestOperation *operation, id responseObject) {
+           if (![responseObject isKindOfClass:[NSDictionary class]]){
+               NSError *error;
+               failure(operation, error);
+               return;
+           }
+           success(responseObject);
+       }
+       failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+           
+           failure(operation, error);
+       }];
+}
+#pragma mark- Restore Note
+-(void)CNRequestRestoreNoteWithUserID:(NSString *)userID noteID:(NSString *)noteID currentTimestamp:(NSString *)currentTimestamp success: (void(^)(id responseDict))success  failure:(void(^)(AFHTTPRequestOperation *operation, NSError *error))failure
+{
+    static NSString *endpoint = @"AppPosts/Restore";
+    
+    NSDictionary *params;
+    
+    params = @{@"userId":userID,
+               @"noteid":noteID,
+               @"currentTimestamp":currentTimestamp,
+               @"APIKey":APIKey};
+    
+    [self POST:endpoint
+    parameters:params
+       success:^(AFHTTPRequestOperation *operation, id responseObject) {
+           if (![responseObject isKindOfClass:[NSDictionary class]]){
+               NSError *error;
+               failure(operation, error);
+               return;
+           }
+           success(responseObject);
+       }
+       failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+           
+           failure(operation, error);
+       }];
+}
+#pragma mark- Delete Note
+-(void)CNRequestDeleteNoteWithUserID:(NSString *)userID noteID:(NSString *)noteID currentTimestamp:(NSString *)currentTimestamp success: (void(^)(id responseDict))success  failure:(void(^)(AFHTTPRequestOperation *operation, NSError *error))failure
+{
+    static NSString *endpoint = @"AppPosts/Delete";
+    
+    NSDictionary *params;
+    
+    params = @{@"userId":userID,
+               @"noteid":noteID,
+               @"currentTimestamp":currentTimestamp,
+               @"APIKey":APIKey};
+    
+    [self POST:endpoint
+    parameters:params
+       success:^(AFHTTPRequestOperation *operation, id responseObject) {
+           if (![responseObject isKindOfClass:[NSDictionary class]]){
+               NSError *error;
+               failure(operation, error);
+               return;
+           }
+           success(responseObject);
+       }
+       failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+           
+           failure(operation, error);
+       }];
+}
+
+#pragma mark- writing and edit note content
+-(void)CNRequestWriteAndEditWithUserID:(NSString *)userID noteID:(NSString *)noteID content:(NSString *)content noteTitle:(NSString *)noteTitle currentTimestamp:(NSString *)currentTimestamp success: (void(^)(id responseDict))success  failure:(void(^)(AFHTTPRequestOperation *operation, NSError *error))failure
+{
+    static NSString *endpoint = @"AppPosts/AddOrEditNoteContent";
+    
+    NSDictionary *params;
+    
+    params = @{@"userId":userID,
+               @"noteid":noteID,
+               @"text":content,
+               @"noteTitle":noteTitle,
+                @"currentTimestamp":currentTimestamp,
+               @"APIKey":APIKey};
+    
+    [self POST:endpoint
+    parameters:params
+       success:^(AFHTTPRequestOperation *operation, id responseObject) {
+           if (![responseObject isKindOfClass:[NSDictionary class]]){
+               NSError *error;
+               failure(operation, error);
+               return;
+           }
+           success(responseObject);
+       }
+       failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+           
+           failure(operation, error);
+       }];
+}
+#pragma mark- Forgot password
+-(void)CNRequestForgotPasswordWithEmail:(NSString *)email success: (void(^)(id responseDict))success  failure:(void(^)(AFHTTPRequestOperation *operation, NSError *error))failure
+{
+    static NSString *endpoint = @"AppPosts/ForgetPassword";
+    
+    NSDictionary *params;
+    
+    params = @{@"EmailId":email,
+                    @"APIKey":APIKey};
+    
+    [self POST:endpoint
+    parameters:params
+       success:^(AFHTTPRequestOperation *operation, id responseObject) {
+           if (![responseObject isKindOfClass:[NSDictionary class]]){
+               NSError *error;
+               failure(operation, error);
+               return;
+           }
+           success(responseObject);
+       }
+       failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+           
+           failure(operation, error);
+       }];
+
+}
+@end

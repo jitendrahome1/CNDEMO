@@ -1,0 +1,27 @@
+//
+//  AppDelegate.h
+//  ClearNote
+//
+//  Created by Jitendra Agarwal on 26/11/15.
+//  Copyright © 2015 Jitendra Agarwal. All rights reserved.
+//
+
+#import <UIKit/UIKit.h>
+#import <CoreData/CoreData.h>
+#import <AFNetworking/AFNetworking.h>
+#import "CNAddBackgroundOparation.h"
+#import "CNAllNotsListViewController.h"
+#import "CNWelcomeViewController.h"
+@interface AppDelegate : UIResponder <UIApplicationDelegate>
+
+@property (strong, nonatomic) UIWindow *window;
+@property (readonly, strong, nonatomic) NSManagedObjectContext *managedObjectContext;
+@property (readonly, strong, nonatomic) NSManagedObjectModel *managedObjectModel;
+@property (readonly, strong, nonatomic) NSPersistentStoreCoordinator *persistentStoreCoordinator;
+@property(nonatomic,strong)UINavigationController *navigationController;
+@property (nonatomic,readwrite) BOOL isUploadFromBacground;
+
+-(void)startMonitoringNetwork;
+-(void)goToViewController:(NSString *)view;
+@end
+

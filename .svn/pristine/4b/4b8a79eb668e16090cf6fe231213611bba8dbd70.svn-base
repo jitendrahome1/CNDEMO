@@ -1,0 +1,835 @@
+
+//  CNNoteDescriptionViewController.m
+//  ClearNote
+//
+//  Created by Jitendra Agarwal on 04/12/15.
+//  Copyright © 2015 Jitendra Agarwal. All rights reserved.
+//
+
+#import "CNNoteDescriptionViewController.h"
+#import "CnNoteDescriptionView.h"
+@interface CNNoteDescriptionViewController ()<UIActivityItemSource,UITextFieldDelegate,UITextViewDelegate,UIScrollViewDelegate>
+{
+    NSString *noteID;
+    NSString * tempUserId;
+    NSString *noteName;
+    UIBarButtonItem *backBtn;
+    UIBarButtonItem *shareBtn;
+    UIBarButtonItem *keyApperBtn;
+    NSArray *actionButtonItems;
+    BOOL kyeboardStatus;
+    CGRect keyboard;
+    NSInteger index;
+    NSInteger nextIndex;
+    NSString *strTextField;
+    NSString *strTextView;
+    UIImageView *ImageView;
+    UIButton *shareButton;
+    NSString *timeStampDate;
+    UIButton *crossBtnTag ;
+    CnNoteDescriptionView *cnCustomView;
+    BOOL isTextUpdate;
+    BOOL isFirstTime;
+    
+}
+@end
+
+@implementation CNNoteDescriptionViewController
+- (void)viewDidLoad {
+    [super viewDidLoad];
+    [self flipNotes];
+    [self getValueToSwap];
+    [self intinalSetup];
+    [self keyBordSetup];
+    [self NavigationButtonSetup];
+    
+    if([UIScreen mainScreen].bounds.size.height <= 568)
+    {
+        self.scrollViewBG.contentSize = CGSizeMake(_scrollViewBG.frame.size.width*_arrTotalNotes.count,0);
+    }
+  }
+- (void)didReceiveMemoryWarning {
+    [super didReceiveMemoryWarning];
+}
+
+-(void)intinalSetup
+{
+    backBtn = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"ArrowNotsiPhone.png"] style:UIBarButtonItemStylePlain target:self action:@selector(backBtnAction)];
+    self.navigationItem.leftBarButtonItem = backBtn;
+    [[UINavigationBar appearance]setShadowImage:[[UIImage alloc] init]];
+}
+
+
+-(void)viewWillAppear:(BOOL)animated
+{
+    [super viewWillAppear:animated];
+}
+-(void)NavigationButtonSetup {
+    [self SettingtUpBarButtonItemOnly];
+}
+-(void)SettingtUpBarButtonItemOnly {
+    [self SettingtUpBarButtonItems];
+    [self.navigationItem setRightBarButtonItems:nil animated:NO];
+    UIButton *button  = [[UIButton alloc] initWithFrame:CGRectMake(0, 0, 44, 44)];
+    button.contentEdgeInsets = UIEdgeInsetsMake(-5, 0, 0, -40);
+    [button setImage:[UIImage imageNamed:@"ShareHeaderIconiPhone.png"] forState:UIControlStateNormal];
+    [button addTarget:self action:@selector(shareBtnAction) forControlEvents:UIControlEventTouchUpInside];
+    shareBtn = [[UIBarButtonItem alloc] initWithCustomView:button];
+    [self.navigationItem setRightBarButtonItem:shareBtn animated:NO];
+}
+-(void)SettingtUpBarButtonItems {
+    shareButton  = [[UIButton alloc] initWithFrame:CGRectMake(0, 0, 44, 44)];
+    shareButton.contentEdgeInsets = UIEdgeInsetsMake(-5, 0, 0, -20);
+    [shareButton setImage:[UIImage imageNamed:@"ShareHeaderIconiPhone.png"] forState:UIControlStateNormal];
+    [shareButton addTarget:self action:@selector(shareBtnAction) forControlEvents:UIControlEventTouchUpInside];
+    UIBarButtonItem *share_Btn = [[UIBarButtonItem alloc] initWithCustomView:shareButton];
+    
+    ImageView = [[UIImageView alloc] initWithImage:[UIImage  imageNamed:@"KeyboardHeaderIconiPhone.png"]];
+    UIButton *keyboardHideButton  = [[UIButton alloc] initWithFrame:CGRectMake(0, 0, 44, 44)];
+    keyboardHideButton.bounds = ImageView.bounds;
+    [keyboardHideButton addSubview:ImageView];
+    keyboardHideButton.contentEdgeInsets = UIEdgeInsetsMake(0, 0, 0, -25);
+    // [keyboardHideButton setImage:[UIImage imageNamed:@"KeyboardHeaderIconiPhone.png"] forState:UIControlStateNormal];
+    [keyboardHideButton addTarget:self action:@selector(keyApperBtnAction) forControlEvents:UIControlEventTouchUpInside];
+    UIBarButtonItem *keyApper_Btn = [[UIBarButtonItem alloc] initWithCustomView:keyboardHideButton];
+    actionButtonItems = @[keyApper_Btn,share_Btn];
+    [self.navigationItem setRightBarButtonItems:actionButtonItems animated:NO];
+}
+
+
+#pragma mark-
+#pragma mark- Reload Next Note.
+
+-(void)nextNoteRelaod
+{
+    isFirstTime = YES;
+    if(_arrTotalNotes.count ==1 || !_arrTotalNotes)
+    {
+        [self.navigationController popViewControllerAnimated:YES];
+    }
+    else
+    {
+        if (_pageIndex ==[_arrTotalNotes count]-1) {
+            [self loderStop:self.view];
+            _pageIndex = 0;
+        }
+        else
+        {
+            [self loderStop:self.view];
+        }
+        [self reloadData];
+        [self removeViewInScrollView];
+        [self flipNotes];
+        [self getValueToSwap];
+    }
+    
+}
+
+-(void)removeViewInScrollView
+{
+    for(int i = 0; i<_arrTotalNotes.count ; i++)
+    {
+        for (UIView *vtemp in _scrollViewBG.subviews) {
+            [vtemp removeFromSuperview];
+        }
+        
+    }
+}
+
+-(void)shareBtnAction {
+    NSLog(@"%@",strTextView);
+    NSString * message = strTextView;
+    NSArray * Items = @[message];
+    //Open activity view controller
+    UIActivityViewController *ActivityView = [[UIActivityViewController alloc]
+                                              initWithActivityItems:Items
+                                              applicationActivities:nil] ;
+    [ActivityView setExcludedActivityTypes:
+     @[UIActivityTypeAssignToContact,
+       UIActivityTypeCopyToPasteboard,
+       // UIActivityTypePostToTwitter,
+       UIActivityTypeCopyToPasteboard,
+       UIActivityTypePostToWeibo,
+       UIActivityTypeMessage,
+       //UIActivityTypePostToFacebook,
+       UIActivityTypePostToFlickr,
+       UIActivityTypePostToVimeo,
+       UIActivityTypeAirDrop,
+       UIActivityTypePostToTencentWeibo,
+       UIActivityTypeSaveToCameraRoll,
+       UIActivityTypeAddToReadingList
+       
+       ]];
+    [self presentViewController:ActivityView animated:YES completion:nil];
+    ActivityView.completionWithItemsHandler = ^(NSString *activityType, BOOL completed, NSArray *returnedItems, NSError *activityError) {
+        // When completed flag is YES, user performed specific activity
+        
+        //[ActivityView setCompletionHandler:^(NSString *activityType, BOOL completed) {
+        
+        NSLog(@"%@",activityType);
+        if (completed) {
+//            UIAlertView *Alert = [[UIAlertView alloc] initWithTitle:@"Share successfully " message:@"" delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
+//            [Alert show];
+            
+        }
+        else {
+            NSLog(@"canceled");
+        }
+        
+    };
+    
+}
+
+-(void)keyApperBtnAction
+{
+    
+    if(kyeboardStatus)
+    {
+        [self.view endEditing:YES];
+        kyeboardStatus = NO;
+    }
+    else
+    {
+   kyeboardStatus = YES;
+    }
+}
+-(void)backBtnAction
+{
+    self.navigationController.navigationBar.userInteractionEnabled = NO;
+    if(isTextUpdate)
+    {
+        NSLog(@"Title Name%@",strTextField);
+        NSLog(@" Description %@",strTextView);
+        NSLog(@" Note ID %@",noteID);
+        if([[self trim:strTextField]length] == 0 && [[self trim:strTextView]length] == 0)
+        {
+            [self postDataforRequestId:Request_Move_Trash_Note_Back];
+            
+           // [self.navigationController popViewControllerAnimated:YES];
+ 
+            
+        }
+        else {
+            cnCustomView.txtNoteTitle.tag  =_tampIndex;
+            UIView * viewTag = [self.view viewWithTag:cnCustomView.txtNoteTitle.tag].superview;
+            for(UIView *tmpView in viewTag.subviews)
+            {
+                if([tmpView isKindOfClass:[UITextField class]])
+                {
+                    UITextField *textP = (UITextField *)tmpView;
+                    strTextField = textP.text;
+                    
+                }
+            }
+            UIView * viewTag2 = [self.view viewWithTag:cnCustomView.txtNoteTitle.tag].superview;
+            for(UIView *tmpView in viewTag2.subviews)
+            {
+                if([tmpView isKindOfClass:[UITextView class]])
+                {
+                    UITextView *textP = (UITextView *)tmpView;
+                    strTextView = textP.text;
+                }
+                
+            }
+            self.navigationItem.leftBarButtonItem.enabled = NO;
+            if(![self ValidateFields])
+            {
+                return ;
+            }
+            
+            [self loderStart:self.view strLbl:@"Loading"];
+            
+            [self postDataforRequestId:Request_Update_Note_Contant];
+        }
+        
+    }
+    else
+    {
+        [self.navigationController popViewControllerAnimated:YES];
+    }
+    
+}
+
+-(void)getValueToSwap
+{
+     // [self.view endEditing:YES];
+    NSLog(@" Tamp Index Value %ld",(long)_pageIndex);
+    UIView *viewTag  = [self.view viewWithTag:_pageIndex+1].superview;
+    for(UIView *tmpView in viewTag.subviews)
+    {
+        if([tmpView isKindOfClass:[UITextView class]])
+        {
+            UITextView * taxtItems = (UITextView *)tmpView;
+            strTextView = taxtItems.text;
+         
+        }
+    }
+    UIView *viewTag2  = [self.view viewWithTag:_pageIndex+1].superview;
+    for(UIView *tmpView in viewTag2.subviews)
+    {
+        
+        if([tmpView isKindOfClass:[UITextField class]])
+        {
+            UITextField * textField = (UITextField *)tmpView;
+            strTextField = textField.text;
+  
+        }
+    }
+    
+    UIView *viewTag3  = [self.view viewWithTag:_pageIndex+1].superview;
+    for(UIView *tmpView in viewTag3.subviews)
+    {
+        
+        if([tmpView isKindOfClass:[UIButton class]])
+        {
+            UIButton * btnValue = (UIButton *)tmpView;
+            
+            self.btnNoteTitleCross = btnValue;
+            
+        }
+        if(!kyeboardStatus)
+        {
+      self.btnNoteTitleCross.contentEdgeInsets = UIEdgeInsetsMake(-5, 0, 0, -15);
+        }
+        
+    }
+}
+
+- (IBAction)btnTrashAction:(id)sender {
+    [self loderStart:self.view strLbl:@"Loading"];
+    [self postDataforRequestId:Request_Move_Trash_Note];
+}
+
+#pragma mark- key bord setup
+-(void)keyBordSetup
+{
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(keyboardWillShow:)
+                                                 name:UIKeyboardWillChangeFrameNotification
+                                               object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardWillHide:) name:UIKeyboardWillHideNotification object:nil];
+}
+
+//-(void)viewWillDisappear:(BOOL)animated{
+//    
+//    [[NSNotificationCenter defaultCenter] removeObserver:self];
+//    [[NSNotificationCenter defaultCenter] removeObserver:self name:UIKeyboardWillHideNotification object:nil];
+//}
+-(void)keyboardWillShow:(NSNotification *)notification
+{
+    self.btnNoteTitleCross.contentEdgeInsets = UIEdgeInsetsMake(-5, 0, 0, 3);
+    
+    NSDictionary* info = [notification userInfo];
+    CGSize kbSize = [[info objectForKey:UIKeyboardFrameBeginUserInfoKey] CGRectValue].size;
+    UIEdgeInsets contentInsets = UIEdgeInsetsMake(0.0, 0.0, kbSize.height, -4.0);
+    
+    UIView *viewTag  = [self.view viewWithTag:_pageIndex+1].superview;
+    for(UIView *tmpView in viewTag.subviews)
+    {
+        
+        if([tmpView isKindOfClass:[UITextView class]])
+        {
+            UITextView * taxtItems = (UITextView *)tmpView;
+            self.txtWritingArea = taxtItems;
+            _txtWritingArea.scrollIndicatorInsets = contentInsets;
+            [_txtWritingArea setContentInset:contentInsets];
+        }
+    }
+    
+
+    if(kyeboardStatus)
+    {
+  
+        //kyeboardStatus = NO;
+    }
+    else
+    {
+        [self.navigationItem setRightBarButtonItem:nil animated:NO];
+        [self fadeAnimations];  // start animations
+        [self.navigationItem setRightBarButtonItems:actionButtonItems animated:NO];
+        kyeboardStatus = YES;
+    }
+}
+-(void)keyboardWillHide:(NSNotification *)note
+{
+    self.btnNoteTitleCross.contentEdgeInsets = UIEdgeInsetsMake(-5, 0, 0, -18);
+    _txtWritingArea.scrollIndicatorInsets = UIEdgeInsetsMake(0, 0, 0, -4.0);
+    [_txtWritingArea setContentInset:UIEdgeInsetsMake(0, 0, 0, -0.0)];
+    [self.navigationItem setRightBarButtonItems:nil animated:NO];
+    [self.navigationItem setRightBarButtonItem:shareBtn animated:NO];
+
+    kyeboardStatus = NO;
+}
+-(void)fadeAnimations
+{
+    [ImageView setAlpha:0];
+    [UIImageView beginAnimations:NULL context:nil];
+    [UIImageView setAnimationCurve:UIViewAnimationCurveEaseIn];
+    [UIImageView setAnimationDuration:0.3];
+    [ImageView setAlpha:1];
+    [UIImageView commitAnimations];
+}
+
+
+-(void)flipNotes
+{
+        for (int i = 0; i < [_arrTotalNotes count]; i++) {
+        _objMaster = [_arrTotalNotes objectAtIndex:i];
+        CGRect frame;
+        frame.origin.x = [[UIScreen mainScreen]bounds].size.width * i;
+        frame.origin.y = 0;
+        frame.size = self.scrollViewBG.frame.size;
+        cnCustomView = [[[NSBundle mainBundle] loadNibNamed:@"CnNoteDescriptionView" owner:self options:nil] objectAtIndex:0];
+        cnCustomView.frame = frame;
+        
+        cnCustomView.txtNoteTitle.text = [_objMaster noteName];
+        cnCustomView.txtWritingArea.text = [_objMaster fileData];
+        
+        cnCustomView.btnNoteTitleCross.tag = i+1;
+        cnCustomView.txtNoteTitle.tag = i+1;
+        cnCustomView.txtWritingArea.tag = i+1;
+        cnCustomView.txtNoteTitle.delegate  = self;
+        cnCustomView.txtWritingArea.delegate = self;
+        [cnCustomView.btnNoteTitleCross addTarget:self action:@selector(crossAction:) forControlEvents:UIControlEventTouchUpInside];
+        [self.scrollViewBG addSubview:cnCustomView];
+    }
+    
+    _scrollViewBG.contentSize = CGSizeMake([[UIScreen mainScreen]bounds].size.width * [_arrTotalNotes count], _scrollViewBG.frame.size.height);
+    
+    [self.scrollViewBG setContentOffset:CGPointMake((int)_pageIndex*[[UIScreen mainScreen]bounds].size.width, 0) animated:NO];
+    if(!isFirstTime)
+        [self reloadData];
+    
+}
+//The date sort function
+NSComparisonResult dateEvent1SortDescending2(MasterNote *event1, MasterNote *event2, void *context) {
+    return [event2.noteCreateDate compare:event1.noteCreateDate]; // descending order
+}
+
+-(void)reloadData
+{
+    if(Defaults_get_bool(kSortStatus))
+    {
+        [self sortByDate];
+    }
+    else{
+        [self sortByAlphabet];
+    }
+}
+
+#pragma mark sort method
+- (void)sortByAlphabet {
+    [_arrTotalNotes removeAllObjects];
+    NSArray *arrResult = nil;
+    arrResult = [CNDataHelper CNdBGetAllNoteWithUserID:[CNHelper sharedInstance].userLoginID isdeleValue:@"0"];
+    NSSortDescriptor *sortByName = [[NSSortDescriptor alloc] initWithKey:@"noteName" ascending:YES comparator:^NSComparisonResult(id obj1, id obj2) {
+        NSStringCompareOptions comparisonOptions = NSCaseInsensitiveSearch | NSNumericSearch | NSWidthInsensitiveSearch | NSForcedOrderingSearch | NSRegularExpressionSearch;
+        NSRange string1Range = NSMakeRange(0, ((NSString *)obj1).length);
+        return [(NSString *)obj1 compare: (NSString *)obj2 options: comparisonOptions range: string1Range locale: [NSLocale currentLocale]];
+    }];
+    NSArray *sortDescriptors = [NSArray arrayWithObjects:sortByName, nil];
+    arrResult = [NSArray arrayWithArray:[arrResult sortedArrayUsingDescriptors:sortDescriptors]];
+    [_arrTotalNotes addObjectsFromArray:arrResult];
+    
+    NSLog(@"%d",(int)_pageIndex);
+    _objMaster = [_arrTotalNotes objectAtIndex:(int)_pageIndex];
+    noteID = [_objMaster noteCreateID];
+    tempUserId = [_objMaster tempUserId];
+    NSLog(@"%@",[_objMaster fileData]);
+    [self labCount:[_objMaster fileData]];
+}
+
+- (void)sortByDate {
+    // sort by date
+    [_arrTotalNotes removeAllObjects];
+    NSArray *arrResult = nil;
+    arrResult = [CNDataHelper CNdBGetAllNoteWithUserID:[CNHelper sharedInstance].userLoginID isdeleValue:@"0"];
+    arrResult = [arrResult sortedArrayUsingFunction:dateEvent1SortDescending2 context:nil];
+    [_arrTotalNotes addObjectsFromArray:arrResult];
+    
+    NSLog(@"%d",(int)_pageIndex);
+    _objMaster = [_arrTotalNotes objectAtIndex:(int)_pageIndex];
+    NSLog(@"%@", [_objMaster noteName]);
+    noteID = [_objMaster noteCreateID];
+    tempUserId = [_objMaster tempUserId];
+    NSLog(@"%@",[_objMaster fileData]);
+    UIView *viewTag  = [self.view viewWithTag:_pageIndex+1].superview;
+    for(UIView *tmpView in viewTag.subviews)
+    {
+        if([tmpView isKindOfClass:[UITextView class]])
+        {
+            UITextView * taxtItems = (UITextView *)tmpView;
+            [self labCount:taxtItems.text];
+        }
+    }
+}
+
+-(void)labCount:(NSString *)strDesc
+{
+    if([[self trim:strDesc]length] == 0)
+    {
+        self.lblWordCount.text = [NSString stringWithFormat:@"%d Words",0];
+    }
+    else
+    {
+        
+        NSScanner *scanner = [NSScanner scannerWithString:strDesc];
+        NSCharacterSet *whiteSpace = [NSCharacterSet whitespaceAndNewlineCharacterSet];
+        NSCharacterSet *nonWhitespace = [whiteSpace invertedSet];
+        int wordcount = 0;
+        
+        while(![scanner isAtEnd])
+        {
+            [scanner scanUpToCharactersFromSet:nonWhitespace intoString:nil];
+            [scanner scanUpToCharactersFromSet:whiteSpace intoString:nil];
+            wordcount++;
+        }
+        if(wordcount > 1)
+            self.lblWordCount.text = [NSString stringWithFormat:@"%d Words",wordcount];
+        else
+            self.lblWordCount.text = [NSString stringWithFormat:@"%d Word",wordcount];
+    }
+    
+    
+    
+}
+-(void)crossAction:(UIButton *)sender;
+{
+    isTextUpdate = YES;
+    crossBtnTag = sender;
+    UIView *viewTag2  = [self.view viewWithTag:_pageIndex+1].superview;
+    for(UIView *tmpView in viewTag2.subviews)
+    {
+        if([tmpView isKindOfClass:[UIButton class]])
+        {
+            crossBtnTag  = (UIButton *)tmpView;
+            crossBtnTag.hidden = YES;
+        }
+    }
+    
+    UITextField *textValue = (UITextField *)[self.view viewWithTag:crossBtnTag.tag];
+    textValue.text = @"";
+    strTextField = textValue.text;
+    [textValue becomeFirstResponder];
+    
+}
+-(BOOL)crossBtnHideUnhide:(NSString *)pStr
+{
+    BOOL result;
+    if(pStr.length == 0)
+        result = NO;
+    else
+        result = YES;
+    return result;
+}
+
+#pragma mark - UIScrollView Delegate
+#pragma mark - UIScrollView Delegate
+- (void)scrollViewDidScroll:(UIScrollView *)sender
+{}
+- (void)scrollViewDidEndDecelerating:(UIScrollView *)scrollView
+{
+    CGFloat pageWidth = self.scrollViewBG.frame.size.width;
+    int page = ceilf((self.scrollViewBG.contentOffset.x - pageWidth / 2) / pageWidth)+1;
+    _pageIndex = page-1;
+    _tampIndex = page;
+    [self reloadData];
+   [self getValueToSwap];
+
+    NSLog(@"page number = %d",page);
+}
+#pragma text field delegate
+-(BOOL)textFieldShouldReturn:(UITextField *)textField
+{
+    [textField resignFirstResponder];
+    return YES;
+}
+- (void)textFieldDidBeginEditing:(UITextField *)textField
+{
+    strTextField = textField.text;
+    NSLog(@"%@",strTextField);
+    return;
+    
+}
+#pragma mark- Text View Delegate
+- (BOOL)textView:(UITextView *)textView shouldChangeTextInRange:(NSRange)range replacementText:(NSString *)text
+{
+    
+    NSLog(@"---%@",[textView.text stringByReplacingCharactersInRange:range withString:text]) ;
+    
+    strTextView = [textView.text stringByReplacingCharactersInRange:range withString:text];
+//    if ([[[textView textInputMode] primaryLanguage] isEqualToString:@"emoji"] || ![[textView textInputMode] primaryLanguage])
+//    {
+//        return NO;
+//    }
+    isTextUpdate = YES;
+    
+    if([[self trim:strTextView]length] == 0)
+    {
+        self.lblWordCount.text = [NSString stringWithFormat:@"%d Words",0];
+    }
+    else{
+        
+        NSUInteger words = 0;
+        
+        NSScanner *scanner = [NSScanner scannerWithString: strTextView];
+        
+        // Look for spaces, tabs and newlines
+        NSCharacterSet *whiteSpace = [NSCharacterSet whitespaceAndNewlineCharacterSet];
+        while ([scanner scanUpToCharactersFromSet:whiteSpace  intoString:nil])
+            words++;
+        if(words > 1)
+            self.lblWordCount.text = [NSString stringWithFormat:@"%ld Words",(long) words];
+        else
+            self.lblWordCount.text = [NSString stringWithFormat:@"%ld Word",(long) words];
+    }
+    
+    return YES;
+}
+- (BOOL)textField:(UITextField *)textField shouldChangeCharactersInRange:(NSRange)range replacementString:(NSString *)replacementString {
+    UIView *viewTag;
+    UIButton *btn;
+    strTextField = [textField.text stringByReplacingCharactersInRange:range withString:replacementString];
+    isTextUpdate = YES;
+  
+    if([self crossBtnHideUnhide:strTextField])
+    {
+        viewTag = [self.view viewWithTag:textField.tag].superview;
+        for(UIView *tmpView in viewTag.subviews)
+        {
+            if([tmpView isKindOfClass:[UIButton class]])
+            {
+                btn = (UIButton *)tmpView;
+                btn.hidden = NO;
+            }
+        }
+        
+    }
+    else{
+        UIView * viewTag1 = [self.view viewWithTag:textField.tag].superview;
+        for(UIView *tmpView in viewTag1.subviews)
+        {
+            
+            if([tmpView isKindOfClass:[UIButton class]])
+            {
+                UIButton* btn = (UIButton *)tmpView;
+                btn.hidden = YES;
+            }
+        }
+    }
+    return YES;
+}
+#pragma mark-  userDefine function
+#pragma mark-  ValidateFields
+-(BOOL)ValidateFields
+{
+    BOOL result = YES;
+    if([[self trim:strTextField]length] == 0)
+    {
+        strTextField = @"Note";
+    }
+    if([[self trim:strTextView]length] == 0)
+    {
+        strTextView = @"";
+    }
+    return result;
+}
+
+#pragma mark -
+#pragma mark Handel Response
+-(void)postDataforRequestId:(int) requestId
+{   NSString * currentTimestamp = nil;
+    currentTimestamp = [[CNHelper sharedInstance]gettimestampStringFroLocalTime];
+    if(requestId == Request_Update_Note_Contant)
+    {
+        timeStampDate = [[CNHelper sharedInstance]gettimestampStringFroLocalTime];
+        if ([[AFNetworkReachabilityManager sharedManager] isReachable])
+        {
+            
+            dispatch_async(dispatch_get_global_queue( DISPATCH_QUEUE_PRIORITY_LOW, 0), ^{
+                
+                [[CNRequestController sharedInstance]CNRequestWriteAndEditWithUserID:[CNHelper sharedInstance].userLoginID noteID:noteID content:strTextView noteTitle:strTextField currentTimestamp:currentTimestamp success:^(id responseDict) {
+                    [self notifyRequesterWithData:responseDict forRequest:Request_Update_Note_Contant];
+                    
+                } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+                    [self loderStop:self.view];
+                    [CNDataHelper CNdBWrtingAndEditNoteWithUserId:[CNHelper sharedInstance].userLoginID noteCreateID:noteID tempUserId:tempUserId contant:strTextView noteName:strTextField updateNoteDateTime:timeStampDate isSynchoronization:@"0"];
+                    [self.navigationController popViewControllerAnimated:YES];
+                }];
+                
+                dispatch_async(dispatch_get_main_queue(), ^{
+                    [self loderStop:self.view];
+                    [self.navigationController popViewControllerAnimated:YES];
+               
+                });
+            });
+            
+        }
+        else{
+            // net is working
+            [self loderStop:self.view];
+            [CNDataHelper CNdBWrtingAndEditNoteWithUserId:[CNHelper sharedInstance].userLoginID noteCreateID:noteID tempUserId:tempUserId contant:strTextView noteName:strTextField updateNoteDateTime:timeStampDate isSynchoronization:@"0"];
+            [self.navigationController popViewControllerAnimated:YES];
+        }
+    }
+    
+    else if(requestId == Request_Move_Trash_Note)
+    {
+        NSString *currentTimestamp = nil;
+        currentTimestamp = [[CNHelper sharedInstance]gettimestampStringFroLocalTime];
+        if ([[AFNetworkReachabilityManager sharedManager] isReachable])
+        {
+            [self loderStart:self.view strLbl:@"Loading"];
+            NSString *currentTimestamp = [[CNHelper sharedInstance]gettimestampStringFroLocalTime];
+            [[CNRequestController sharedInstance]CNRequestMoveToTrashWithUserID:[CNHelper sharedInstance].userLoginID noteID:noteID currentTimestamp:currentTimestamp success:^(id responseDict) {
+                if (responseDict != (id)[NSNull null])
+                {    [self notifyRequesterWithData:responseDict forRequest:Request_Move_Trash_Note];
+                    
+                }
+                
+            } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+                [self loderStop:self.view];
+                [CNDataHelper CNdBMoveTrashWithUserID:[CNHelper sharedInstance].userLoginID noteCreateID:noteID isDeleted:@"1" noteName:noteName tempUserId:tempUserId isSynchoronization:@"0"];
+                //   [self nextNoteRelaod];
+                //  [self.navigationController popViewControllerAnimated:YES];
+                
+            }];
+        }
+        else
+        {
+            // net is not working
+            [self loderStop:self.view];
+            [CNDataHelper CNdBMoveTrashWithUserID:[CNHelper sharedInstance].userLoginID noteCreateID:noteID isDeleted:@"1" noteName:noteName tempUserId:tempUserId isSynchoronization:@"0"];
+                [self nextNoteRelaod];
+            
+        }
+        
+    }
+    
+    else if(requestId == Request_Move_Trash_Note_Back)
+    {
+        NSString *currentTimestamp = nil;
+        currentTimestamp = [[CNHelper sharedInstance]gettimestampStringFroLocalTime];
+        if ([[AFNetworkReachabilityManager sharedManager] isReachable])
+        {
+            [self loderStart:self.view strLbl:@"Loading"];
+            NSString *currentTimestamp = [[CNHelper sharedInstance]gettimestampStringFroLocalTime];
+            [[CNRequestController sharedInstance]CNRequestMoveToTrashWithUserID:[CNHelper sharedInstance].userLoginID noteID:noteID currentTimestamp:currentTimestamp success:^(id responseDict) {
+                if (responseDict != (id)[NSNull null])
+                {    [self notifyRequesterWithData:responseDict forRequest:Request_Move_Trash_Note_Back];
+                    
+                }
+                
+            } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+                [self loderStop:self.view];
+                [CNDataHelper CNdBMoveTrashWithUserID:[CNHelper sharedInstance].userLoginID noteCreateID:noteID isDeleted:@"1" noteName:noteName tempUserId:tempUserId isSynchoronization:@"0"];
+                //   [self nextNoteRelaod];
+                //  [self.navigationController popViewControllerAnimated:YES];
+                
+            }];
+        }
+        else
+        {
+            // net is not working
+            [self loderStop:self.view];
+            [CNDataHelper CNdBMoveTrashWithUserID:[CNHelper sharedInstance].userLoginID noteCreateID:noteID isDeleted:@"1" noteName:noteName tempUserId:tempUserId isSynchoronization:@"0"];
+            [self nextNoteRelaod];
+            
+        }
+        
+    }
+
+}
+-(void)notifyRequesterWithData:(id) responseData forRequest:(int) requestId
+{   NSString *message = nil;
+    NSString *code = responseData[@"ResponseCode"];
+    message = responseData[@"ResponseDetails"];
+    if(requestId == Request_Update_Note_Contant)
+    {
+        if([code isEqualToString:@"200"])
+        {
+            
+            [CNDataHelper CNdBWrtingAndEditNoteWithUserId:get_ValueByKye(kLoginID) noteCreateID:noteID tempUserId:tempUserId contant:strTextView noteName:strTextField updateNoteDateTime:responseData[@"updateNoteDateTime"] isSynchoronization:@"1"];
+            [self loderStop:self.view];
+            [self.delegate didFinishedUpdateNote:YES];
+            //[self.navigationController popViewControllerAnimated:YES];
+            
+        }
+        if([code isEqualToString:@"201"])
+        {
+            [self loderStop:self.view];
+            [self.navigationController popViewControllerAnimated:YES];
+        }
+    }
+    else if(requestId == Request_Move_Trash_Note)
+    {
+        [self loderStop:self.view];
+        
+        if([code isEqualToString:@"200"])
+        {
+            [self loderStop:self.view];
+            [CNDataHelper CNdBMoveTrashWithUserID:[CNHelper sharedInstance].userLoginID noteCreateID:responseData[@"noteId"] isDeleted:responseData[@"isDeleted"] noteName:noteName tempUserId:tempUserId isSynchoronization:responseData[@"isSynchronise"]];
+            
+            //   [self.navigationController popViewControllerAnimated:YES];
+          [self nextNoteRelaod];
+            //   [self postDataforRequestId:Request_Fetch_All_NoteList];
+            
+        }
+        else if([code isEqualToString:@"201"])
+        {  [self loderStop:self.view];
+            [self.navigationController popViewControllerAnimated:YES];
+            NSLog(@"Error");
+        }
+    }
+    
+    
+    else if(requestId == Request_Move_Trash_Note_Back)
+    {
+        [self loderStop:self.view];
+        
+        if([code isEqualToString:@"200"])
+        {
+            [self loderStop:self.view];
+            [CNDataHelper CNdBMoveTrashWithUserID:[CNHelper sharedInstance].userLoginID noteCreateID:responseData[@"noteId"] isDeleted:responseData[@"isDeleted"] noteName:noteName tempUserId:tempUserId isSynchoronization:responseData[@"isSynchronise"]];
+            
+             [self.navigationController popViewControllerAnimated:YES];
+         }
+        else if([code isEqualToString:@"201"])
+        {  [self loderStop:self.view];
+            [self.navigationController popViewControllerAnimated:YES];
+            NSLog(@"Error");
+        }
+    }
+    else if(requestId == Request_Fetch_All_NoteList)
+    {
+        //_arrTotalNotes = nil;
+        NSString *code = responseData[@"ResponseCode"];
+        message = responseData[@"ResponseDetails"];
+        NSLog(@"%@",responseData);
+        if([code isEqualToString:@"200"])
+        {
+            NSArray *arrNoteList = responseData[@"noteList"];
+            Set_TimeStamp(kTimeStamp, responseData[@"TimeStamp"]);
+            [CNHelper sharedInstance].noteListTimeStamp =  responseData[@"TimeStamp"];
+            if(!(arrNoteList == nil) || [arrNoteList count] == 0)
+            {
+                for(int i =0; i<arrNoteList.count; i++)
+                {
+                    
+                    NSDictionary *dic = (NSDictionary *)[arrNoteList objectAtIndex:i];
+                    for (id item in dic) {
+                        [_arrTotalNotes addObject:[dic objectForKey:item]];
+                    }
+                }
+                
+            }
+            else if([code isEqualToString:@"201"])
+            {
+                [self loderStop:self.view];
+                Set_TimeStamp(kTimeStamp, responseData[@"TimeStamp"]);
+                
+            }
+        }
+    }
+}
+@end

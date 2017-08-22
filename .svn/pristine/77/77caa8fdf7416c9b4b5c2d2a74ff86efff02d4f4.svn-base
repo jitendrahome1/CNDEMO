@@ -1,0 +1,39 @@
+//
+//  CNDataHelper.h
+//  ClearNote
+//
+//  Created by Jitendra Agarwal on 01/12/15.
+//  Copyright © 2015 Jitendra Agarwal. All rights reserved.
+//
+
+#import <Foundation/Foundation.h>
+#import "Users.h"
+#import "AppDelegate.h"
+#import "MasterNote.h"
+#import "CreateNoteOfline.h"
+#import "CreateTemporaryDelete.h"
+#import "CreateRestoreOfline.h"
+#import "CreatePermanentDelete.h"
+#import "CreateNoteContentOffline.h"
+#import "DefultNoteName.h"
+@interface CNDataHelper : NSObject
++(NSArray *)CNdBAuthenticateUser:(NSString *)email userPassword:(NSString *)userPassword;
++(void)CNdBInsertUserDetailsWithUserID:(NSString *)userID userName:(NSString *)userName userPassword:(NSString *)userPassword email:(NSString *)email;
++(MasterNote*)CNdBCreateNewNotewithUserID:(NSString *)userID noteCreateID:(NSString *)noteCreateID noteTitle:(NSString *)noteTitle isDeleted:(NSString *)isDeleted content:(NSString *)content noteCreateDate:(NSString *)noteCreateDate isSynchoronization:(NSString *)isSynchoronization tempNoteID:(NSString *)tempNoteID;
++(NSArray *)CNdBGetAllNoteWithUserID:(NSString *)userID isdeleValue:(NSString *)isdeleValue;
++(void)CNdBMoveTrashWithUserID:(NSString *)userID noteCreateID:(NSString *)noteCreateID isDeleted:(NSString *)isDeleted noteName:(NSString *)noteName tempUserId:(NSString *)tempUserId isSynchoronization:(NSString *)isSynchoronization;
++(void)CNdBRestoreNoteWithUserID:(NSString *)userID noteCreateID:(NSString *)noteCreateID isDeleted:(NSString *)isDeleted noteName:(NSString *)noteName tempUserId:(NSString *)tempUserId isSynchoronization:(NSString *)isSynchoronization;
++(void)CNdBDeleteNotePermanentlyWithuserID:(NSString *)userID noteCreateID:(NSString *)noteCreateID noteName:(NSString *)noteName tempUserId:(NSString *)tempUserId isSynchoronization:(NSString *)isSynchoronization;
+//+(void)CNdBWrtingAndEditNoteWithUserId:(NSString *)userID noteCreateID:(NSString *)noteCreateID tempUserId:(NSString *)tempUserId contant:(NSString *)contant noteName:(NSString *)noteName isSynchoronization:(NSString *)isSynchoronization;
++(void)CNdBWrtingAndEditNoteWithUserId:(NSString *)userID noteCreateID:(NSString *)noteCreateID tempUserId:(NSString *)tempUserId contant:(NSString *)contant noteName:(NSString *)noteName updateNoteDateTime:(NSString *)updateNoteDateTime isSynchoronization:(NSString *)isSynchoronization;
++(void)flashOutAllRecordsMasterNote:(NSString*)tableName userID:(NSString *)userID;
++(void)removeAllRecordsFromTable:(NSString*)tableName;
++(NSArray *)CNdBFetchDefultNoteName;
++(void)CNdBInsertDefultNoteName:(NSNumber *)defultValue;
++(void)CNdBNoteAlredyExistWithUserId:(NSString *)userID noteCreateID:(NSString *)noteCreateID noteTitle:(NSString *)noteTitle isDeleted:(NSString *)isDeleted content:(NSString *)content noteCreateDate:(NSString *)noteCreateDate isSynchoronization:(NSString *)isSynchoronization;
+// background sync method
++(NSMutableArray *)CNdBFetchBackSyncCreateNoteOfline:(NSString *)userID entityName:(NSString *)entityName;
++(void)CNdBUpdateMasterTableBackgroundSync:(NSString *)userID noteID:(NSString *)noteID noteName:(NSString *)noteName isDeleted:(NSString *)isDeleted isSynchoronization:(NSString *) isSynchoronization fileData:(NSString *)fileData dateTime:(NSString *)dateTime tempUserId:(NSString *)tempUserId keyUpdate:(NSString *)keyUpdate;
++(void)CNdBreplaceTempUserIdWithNoteId:(NSString *)userID tempNoteid:(NSString *)tempNoteid noteID:(NSString *)noteID tableName:(NSString* )tableName;
+
+@end
